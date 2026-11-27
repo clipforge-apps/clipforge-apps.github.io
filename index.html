@@ -11,43 +11,139 @@
 <script src="https://d18k3i06xdslhs.cloudfront.net/053ec5b.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-         background:linear-gradient(160deg,#0f0c29 0%,#1a1a40 55%,#270082 100%);
-         color:#fff; min-height:100vh; display:flex; flex-direction:column; }
-  .wrap { max-width:520px; margin:0 auto; padding:48px 22px 40px; flex:1; }
-  .badge { display:inline-block; background:rgba(0,210,255,.15); color:#00d2ff;
-           border:1px solid rgba(0,210,255,.4); padding:6px 14px; border-radius:999px;
-           font-size:13px; font-weight:600; letter-spacing:.4px; margin-bottom:22px; }
-  h1 { font-size:32px; line-height:1.15; font-weight:800; margin-bottom:14px; }
-  h1 .hl { background:linear-gradient(90deg,#00d2ff,#7b2ff7); -webkit-background-clip:text;
-           background-clip:text; color:transparent; }
-  p.sub { color:#c9c9e0; font-size:16px; line-height:1.5; margin-bottom:26px; }
-  .apps-preview { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
-                  border-radius:16px; padding:14px 20px; margin-bottom:26px; }
-  .apps-preview div { padding:6px 0; color:#dcdcf0; font-size:15px; }
-  .apps-preview div b { color:#fff; }
-  .blur { filter:blur(5px); user-select:none; }
-  .cta { display:block; width:100%; text-align:center; background:linear-gradient(90deg,#00d2ff,#7b2ff7);
-         color:#fff; font-size:19px; font-weight:700; padding:18px; border:none; border-radius:14px;
-         cursor:pointer; box-shadow:0 8px 24px rgba(123,47,247,.45); }
-  .cta:active { transform:scale(.98); }
-  .note { text-align:center; color:#9a9ab8; font-size:13px; margin-top:14px; line-height:1.5; }
-  .footer { text-align:center; color:#666688; font-size:12px; padding:0 22px 22px; }
+  :root {
+    --bg0:#0b0b1c; --bg1:#151538; --bg2:#2b0a52;
+    --cyan:#00d2ff; --violet:#7b2ff7;
+    --txt:#ffffff; --muted:#c6c6e2; --faint:#9a9ab8; --dim:#6f6f92;
+    --card:rgba(255,255,255,.055); --line:rgba(255,255,255,.12);
+  }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg0); color:var(--txt); min-height:100vh;
+    display:flex; flex-direction:column; overflow-x:hidden;
+  }
+  .glow { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+  .glow::before, .glow::after { content:""; position:absolute; border-radius:50%; filter:blur(90px); }
+  .glow::before { width:340px; height:340px; top:-120px; right:-110px; background:rgba(0,210,255,.20); }
+  .glow::after  { width:380px; height:380px; bottom:-140px; left:-130px; background:rgba(123,47,247,.24); }
+  .bg-grad { position:fixed; inset:0; z-index:-2;
+    background:linear-gradient(165deg,var(--bg0) 0%,var(--bg1) 52%,var(--bg2) 100%); }
+
+  .wrap { width:100%; max-width:560px; margin:0 auto; padding:56px 20px 40px; flex:1; }
+
+  .badge { display:inline-flex; align-items:center; gap:8px;
+    background:rgba(0,210,255,.12); color:var(--cyan);
+    border:1px solid rgba(0,210,255,.38); padding:7px 15px; border-radius:999px;
+    font-size:12.5px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
+    margin-bottom:24px; }
+  .badge svg { flex:none; }
+
+  h1 { font-size:clamp(30px,8.4vw,40px); line-height:1.12; font-weight:800;
+    letter-spacing:-.02em; margin-bottom:16px; }
+  h1 .hl { background:linear-gradient(92deg,var(--cyan),var(--violet));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  p.sub { color:var(--muted); font-size:16.5px; line-height:1.6; margin-bottom:30px; max-width:46ch; }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding:8px 18px; margin-bottom:30px;
+    box-shadow:0 18px 44px rgba(0,0,0,.35); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .row { display:flex; align-items:center; gap:14px; padding:13px 0; }
+  .row + .row { border-top:1px solid rgba(255,255,255,.07); }
+  .ico { flex:none; width:42px; height:42px; border-radius:13px; display:flex;
+    align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.14); }
+  .ico svg { width:22px; height:22px; }
+  .t1 { background:rgba(0,210,255,.14); }  .t1 svg { stroke:var(--cyan); }
+  .t2 { background:rgba(123,47,247,.18); } .t2 svg { stroke:#a678ff; }
+  .t3 { background:rgba(0,255,170,.12); }  .t3 svg { stroke:#2ee6a8; }
+  .tx { min-width:0; }
+  .tx b { display:block; font-size:15.5px; font-weight:700; letter-spacing:.1px; }
+  .tx span { display:block; color:var(--muted); font-size:13.5px; margin-top:2px; line-height:1.4; }
+  .num { margin-left:auto; flex:none; color:var(--dim); font-size:12px; font-weight:700; letter-spacing:.8px; }
+  .blur .tx b, .blur .tx span { filter:blur(4.5px); user-select:none; }
+  .more { text-align:center; color:var(--faint); font-size:13px; padding:12px 0 6px;
+    letter-spacing:.3px; }
+
+  .cta { display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:linear-gradient(92deg,var(--cyan),var(--violet)); color:#fff;
+    font-size:18.5px; font-weight:800; letter-spacing:.2px; padding:19px 20px;
+    border:none; border-radius:16px; cursor:pointer;
+    box-shadow:0 10px 30px rgba(123,47,247,.5), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .cta:hover { filter:brightness(1.08); box-shadow:0 12px 34px rgba(123,47,247,.58), inset 0 1px 0 rgba(255,255,255,.25); }
+  .cta:active { transform:scale(.975); }
+  .cta:focus-visible { outline:3px solid rgba(0,210,255,.65); outline-offset:3px; }
+  .cta svg { flex:none; }
+
+  .note { text-align:center; color:var(--faint); font-size:13.5px; margin-top:18px; line-height:1.6;
+    max-width:44ch; margin-left:auto; margin-right:auto; }
+  .footer { text-align:center; color:var(--dim); font-size:12.5px; padding:0 22px 26px; line-height:1.7; }
+
+  @media (min-width:640px) {
+    .wrap { padding-top:76px; }
+    .card { padding:10px 24px; }
+    .row { padding:15px 0; }
+    p.sub { font-size:17.5px; }
+  }
 </style>
 </head>
 <body>
+<div class="bg-grad"></div>
+<div class="glow"></div>
 <div class="wrap">
-  <span class="badge">FREE GUIDE</span>
+  <span class="badge">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 5.9 6.3.6-4.8 4.2 1.4 6.2L12 15.8 6.7 18.9l1.4-6.2-4.8-4.2 6.3-.6z"/></svg>
+    Free Guide
+  </span>
   <h1>10 Free Apps That <span class="hl">Feel Illegal</span> to Know About</h1>
-  <p class="sub">A short, free guide to 10 genuinely useful free apps.</p>
-  <div class="apps-preview">
-    <div><b>#1</b> &nbsp;Libby — free ebooks &amp; audiobooks</div>
-    <div><b>#2</b> &nbsp;Photomath — solves math from a photo</div>
-    <div class="blur"><b>#3-10</b> &nbsp;Revealed inside the guide</div>
+  <p class="sub">We tested dozens of free apps and kept only the ones that feel like a cheat code for your phone. The full guide is free.</p>
+
+  <div class="card">
+    <div class="row">
+      <div class="ico t1">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.6 5 8.6 4.2 6 4.2c-1.2 0-2.3.15-3 .4v13.6c.7-.25 1.8-.4 3-.4 2.6 0 4.6.8 6 2.3 1.4-1.5 3.4-2.3 6-2.3 1.2 0 2.3.15 3 .4V4.6c-.7-.25-1.8-.4-3-.4-2.6 0-4.6.8-6 2.3z"/><path d="M12 6.5v13.6"/></svg>
+      </div>
+      <div class="tx"><b>Libby</b><span>Free ebooks &amp; audiobooks</span></div>
+      <span class="num">#1</span>
+    </div>
+    <div class="row">
+      <div class="ico t2">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.5-2.5h9L18 8h2a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.2"/><path d="M10.6 13h2.8M12 11.6v2.8"/></svg>
+      </div>
+      <div class="tx"><b>Photomath</b><span>Solves math from a photo</span></div>
+      <span class="num">#2</span>
+    </div>
+    <div class="row">
+      <div class="ico t3">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M5 12h14M5 17h14"/><circle cx="9.5" cy="7" r="1.8" fill="currentColor" stroke="none"/><circle cx="14.5" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="1.8" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="tx"><b>Snapseed</b><span>Pro photo editing, $0</span></div>
+      <span class="num">#3</span>
+    </div>
+    <div class="row blur">
+      <div class="ico t1">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg>
+      </div>
+      <div class="tx"><b>Hidden gem</b><span>Unlocked inside the guide</span></div>
+      <span class="num">#4</span>
+    </div>
+    <div class="row blur">
+      <div class="ico t2">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 12l2 2 4-4.5"/></svg>
+      </div>
+      <div class="tx"><b>Hidden gem</b><span>Unlocked inside the guide</span></div>
+      <span class="num">#5</span>
+    </div>
+    <div class="more">+ 5 more revealed inside the guide</div>
   </div>
-  <button class="cta" onclick="_zl()">Unlock the Free Guide</button>
-  <p class="note">Complete 1 free offer to unlock. Takes about a minute.</p>
+
+  <button class="cta" onclick="_zl()">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></svg>
+    Unlock the Free Guide
+  </button>
+  <p class="note">To keep the guide 100% free, complete 1 free offer (like installing a free app) to unlock it. Takes about a minute.</p>
 </div>
-<div class="footer">100% free. No payment, no subscription.</div>
+<div class="footer">The guide is genuinely free and delivered right after you complete one free offer.<br>No payment, no subscription.</div>
 </body>
 </html>
